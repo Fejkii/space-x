@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:space_x/app/api_factory.dart';
 import 'package:space_x/model/launch_model.dart';
+import 'package:space_x/ui/launch/launch_detail_view.dart';
 import 'package:space_x/ui/widgets/app_list_view.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
 import 'package:space_x/ui/widgets/app_text_styles.dart';
@@ -55,7 +56,12 @@ class _LaunchListViewState extends State<LaunchListView> {
         ],
       ),
       onTap: () {
-        print(launches[index].name);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LaunchDetailView(launch: launches[index]),
+          ),
+        );
       },
     );
   }
