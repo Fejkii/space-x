@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:space_x/app/api_factory.dart';
+import 'package:space_x/const/app_strings.dart';
+import 'package:space_x/const/app_values.dart';
 import 'package:space_x/model/launch_model.dart';
 import 'package:space_x/ui/launch/launch_detail_view.dart';
+import 'package:space_x/ui/launch/launch_enum.dart';
 import 'package:space_x/ui/widgets/app_list_view.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
 import 'package:space_x/ui/widgets/app_text_styles.dart';
@@ -15,6 +19,7 @@ class LaunchListView extends StatefulWidget {
 
 class _LaunchListViewState extends State<LaunchListView> {
   late List<Launch> launches;
+  LaunchEnum _selectedSegment = LaunchEnum.upcoming;
 
   @override
   void initState() {
@@ -25,24 +30,55 @@ class _LaunchListViewState extends State<LaunchListView> {
   @override
   Widget build(BuildContext context) {
     return AppScaffoldLayout(
-      appBar: AppBar(),
-      body: FutureBuilder(
-        future: ApiFactory().getLaunches(),
-        builder: (BuildContext context, AsyncSnapshot<List<Launch>> snapshot) {
-          if (snapshot.hasData) {
-            launches = snapshot.data!;
-            return AppListView(
+      appBar: AppBar(
+        title: _segmentedControl(),
+      ),
+      body: _body(),
+    );
+  }
+
+  Widget _segmentedControl() {
+    return CupertinoSegmentedControl(
+      unselectedColor: Colors.white,
+      selectedColor: Colors.blue,
+      borderColor: Colors.white,
+      groupValue: _selectedSegment,
+      children: const <LaunchEnum, Widget>{
+        LaunchEnum.upcoming: Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
+          child: Text(AppStrings.upcoming),
+        ),
+        LaunchEnum.past: Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
+          child: Text(AppStrings.past),
+        ),
+      },
+      onValueChanged: (LaunchEnum? value) {
+        if (value != null) {
+          setState(() {
+            _selectedSegment = value;
+          });
+        }
+      },
+    );
+  }
+
+  Widget _body() {
+    return FutureBuilder(
+      future: ApiFactory().getLaunches(_selectedSegment),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          launches = snapshot.data!;
+          return AppListView(
               listData: launches,
               itemBuilder: _itemBuilder,
-              onRefresh: () {
-                return ApiFactory().getLaunches();
-              },
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+              onRefresh: () async {
+                await ApiFactory().getLaunches(_selectedSegment);
+              });
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
