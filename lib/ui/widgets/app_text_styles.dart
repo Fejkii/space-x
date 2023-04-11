@@ -12,7 +12,7 @@ class AppText extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        fontSize: 10,
+        fontSize: 12,
       ),
     );
   }

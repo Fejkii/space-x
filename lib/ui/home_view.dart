@@ -43,11 +43,11 @@ class _HomeViewState extends State<HomeView> {
         items: const [
           BottomNavigationBarItem(
             label: AppStrings.launches,
-            icon: Icon(Icons.wine_bar),
+            icon: Icon(Icons.rocket_launch),
           ),
           BottomNavigationBarItem(
             label: AppStrings.company,
-            icon: Icon(Icons.local_florist),
+            icon: Icon(Icons.info_outline),
           ),
         ],
       ),
