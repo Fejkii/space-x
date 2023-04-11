@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:space_x/app/api_factory.dart';
 import 'package:space_x/const/app_strings.dart';
 import 'package:space_x/const/app_values.dart';
 import 'package:space_x/model/launch_model.dart';
+import 'package:space_x/repository/launch_repository.dart';
 import 'package:space_x/ui/launch/launch_detail_view.dart';
 import 'package:space_x/ui/launch/launch_enum.dart';
 import 'package:space_x/ui/widgets/app_list_view.dart';
@@ -65,7 +65,7 @@ class _LaunchListViewState extends State<LaunchListView> {
 
   Widget _body() {
     return FutureBuilder(
-      future: ApiFactory().getLaunches(_selectedSegment),
+      future: LaunchRepository().getLaunches(_selectedSegment),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           launches = snapshot.data!;
@@ -73,7 +73,7 @@ class _LaunchListViewState extends State<LaunchListView> {
               listData: launches,
               itemBuilder: _itemBuilder,
               onRefresh: () async {
-                await ApiFactory().getLaunches(_selectedSegment);
+                await LaunchRepository().getLaunches(_selectedSegment);
               });
         } else {
           return const Center(child: CircularProgressIndicator());
