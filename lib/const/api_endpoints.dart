@@ -5,4 +5,5 @@ class ApiEndpoints {
 
   static const String launchesUrl = "launches";
   static const String companyUrl = "company";
+  static const String rocketUrl = "rockets";
 }

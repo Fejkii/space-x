@@ -9,7 +9,7 @@ class ApiFactory {
     if (response.statusCode == 200) {
       return response.body;
     } else {
-      throw "Unable to retrieve launches.";
+      throw "Unable to retrieve data.";
     }
   }
 }

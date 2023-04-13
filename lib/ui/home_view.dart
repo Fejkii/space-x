@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:space_x/const/app_strings.dart';
 import 'package:space_x/ui/company/company_view.dart';
 import 'package:space_x/ui/launch/launch_list_view.dart';
+import 'package:space_x/ui/rocket/rocket_list_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _HomeViewState extends State<HomeView> {
   final List<Widget> _pages = [
     const LaunchListView(),
     const CompanyView(),
+    const RocketListView(),
   ];
 
   @override
@@ -48,6 +50,10 @@ class _HomeViewState extends State<HomeView> {
           BottomNavigationBarItem(
             label: AppStrings.company,
             icon: Icon(Icons.info_outline),
+          ),
+          BottomNavigationBarItem(
+            label: AppStrings.rockets,
+            icon: Icon(Icons.rocket),
           ),
         ],
       ),
