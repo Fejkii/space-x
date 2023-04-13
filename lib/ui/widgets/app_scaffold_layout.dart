@@ -27,27 +27,18 @@ class _AppScaffoldLayoutState extends State<AppScaffoldLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: widget.appBar,
-        body: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: widget.appBar,
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: AppPadding.p10),
+        child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppPadding.p10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: AppPadding.p10),
-                      widget.body,
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: AppPadding.p10),
+              widget.body,
             ],
           ),
         ),

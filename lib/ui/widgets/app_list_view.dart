@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:space_x/const/app_values.dart';
 
 class AppListView extends StatelessWidget {
   final List listData;
   final IndexedWidgetBuilder itemBuilder;
-  final Future<void> Function() onRefresh;
+  final Future<void> Function()? onRefresh;
   AppListView({
     Key? key,
     required this.listData,
     required this.itemBuilder,
-    required this.onRefresh,
+    this.onRefresh,
   }) : super(key: key);
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -44,14 +43,16 @@ class AppListViewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Card(
-        child: Center(
-          heightFactor: 1.2,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),
-            child: itemBody,
+    return Material(
+      child: InkWell(
+        onTap: onTap,
+        child: Card(
+          child: Center(
+            heightFactor: 1.2,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),
+              child: itemBody,
+            ),
           ),
         ),
       ),
