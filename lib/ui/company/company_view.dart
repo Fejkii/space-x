@@ -6,8 +6,8 @@ import 'package:space_x/const/app_values.dart';
 import 'package:space_x/cubit/company/company_cubit.dart';
 import 'package:space_x/model/company_model.dart';
 import 'package:space_x/ui/widgets/app_loading_indicator.dart';
+import 'package:space_x/ui/widgets/app_row_item.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
-import 'package:space_x/ui/widgets/app_text_styles.dart';
 import 'package:space_x/ui/widgets/app_toast_message.dart';
 
 class CompanyView extends StatefulWidget {
@@ -68,69 +68,15 @@ class _CompanyViewState extends State<CompanyView> {
   Widget _companyWidget() {
     return Column(
       children: [
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.name),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.name ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.founder),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.founder ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.founded),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.founded.toString() ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.employees),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.employees.toString() ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.ceo),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.ceo ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.cto),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.cto ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.coo),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.coo ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.valuation),
-            const SizedBox(width: AppPadding.p10),
-            AppText(text: company?.valuation.toString() ?? ""),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: AppStrings.summary),
-            const SizedBox(width: AppPadding.p10),
-            Expanded(child: AppText(text: company?.summary ?? "")),
-          ],
-        ),
+        AppRowItem(title: AppStrings.name, value: company?.name ?? ""),
+        AppRowItem(title: AppStrings.founder, value: company?.founder ?? ""),
+        AppRowItem(title: AppStrings.founded, value: company?.founded.toString() ?? ""),
+        AppRowItem(title: AppStrings.employees, value: company?.employees.toString() ?? ""),
+        AppRowItem(title: AppStrings.ceo, value: company?.ceo ?? ""),
+        AppRowItem(title: AppStrings.cto, value: company?.cto ?? ""),
+        AppRowItem(title: AppStrings.coo, value: company?.coo ?? ""),
+        AppRowItem(title: AppStrings.valuation, value: company?.valuation.toString() ?? ""),
+        AppRowItem(title: AppStrings.summary, value: company?.summary ?? ""),
       ],
     );
   }
