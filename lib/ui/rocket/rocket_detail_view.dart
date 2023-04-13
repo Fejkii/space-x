@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:space_x/app/dependency_injection.dart';
+import 'package:space_x/const/app_values.dart';
+import 'package:space_x/cubit/rocket/rocket_cubit.dart';
 import 'package:space_x/model/rocket_model.dart';
-import 'package:space_x/repository/rocket_repository.dart';
+import 'package:space_x/ui/widgets/app_loading_indicator.dart';
 import 'package:space_x/ui/widgets/app_row_item.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
+import 'package:space_x/ui/widgets/app_toast_message.dart';
 
 class RocketDetailView extends StatefulWidget {
   final Rocket? rocket;
@@ -18,6 +23,7 @@ class RocketDetailView extends StatefulWidget {
 }
 
 class _RocketDetailViewState extends State<RocketDetailView> {
+  RocketCubit rocketCubit = instance<RocketCubit>();
   late Rocket? rocket;
 
   @override
@@ -27,29 +33,49 @@ class _RocketDetailViewState extends State<RocketDetailView> {
       rocket = widget.rocket!;
     }
     if (widget.rocketId != null) {
-      getData();
+      _getData(widget.rocketId!);
     }
     super.initState();
   }
 
-  Future getData() async {
-    Rocket r = await RocketRepository().getRocketById(widget.rocketId!);
-    setState(() {
-      rocket = r;
-    });
+  void _getData(String rocketId) {
+    rocketCubit.getRocket(rocketId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffoldLayout(
-      body: _body(),
-      appBar: AppBar(
-        title: Text(rocket?.name ?? ""),
-      ),
+    return BlocBuilder<RocketCubit, RocketState>(
+      builder: (context, state) {
+        return AppScaffoldLayout(
+          body: _body(),
+          appBar: AppBar(
+            title: Text(rocket?.name ?? ""),
+          ),
+        );
+      },
     );
   }
 
   Widget _body() {
+    return BlocConsumer<RocketCubit, RocketState>(
+      listener: (context, state) {
+        if (state is RocketSuccessState) {
+          rocket = state.rocket;
+        } else if (state is RocketFailureState) {
+          AppToastMessage().showToastMsg(state.errorMessage, ToastStates.error);
+        }
+      },
+      builder: (BuildContext context, RocketState state) {
+        if (state is RocketLoadingState) {
+          return const AppLoadingIndicator();
+        } else {
+          return _rocket();
+        }
+      },
+    );
+  }
+
+  Widget _rocket() {
     return Column(
       children: [
         AppRowItem(title: "Name:", value: rocket?.name),

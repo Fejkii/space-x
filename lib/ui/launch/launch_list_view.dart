@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:space_x/app/dependency_injection.dart';
 import 'package:space_x/const/app_strings.dart';
 import 'package:space_x/const/app_values.dart';
+import 'package:space_x/cubit/launch/launch_cubit.dart';
 import 'package:space_x/model/launch_model.dart';
-import 'package:space_x/repository/launch_repository.dart';
 import 'package:space_x/ui/launch/launch_detail_view.dart';
 import 'package:space_x/ui/launch/launch_enum.dart';
 import 'package:space_x/ui/widgets/app_list_view.dart';
+import 'package:space_x/ui/widgets/app_loading_indicator.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
 import 'package:space_x/ui/widgets/app_text_styles.dart';
+import 'package:space_x/ui/widgets/app_toast_message.dart';
 
 class LaunchListView extends StatefulWidget {
   const LaunchListView({super.key});
@@ -18,22 +22,32 @@ class LaunchListView extends StatefulWidget {
 }
 
 class _LaunchListViewState extends State<LaunchListView> {
+  LaunchCubit launchCubit = instance<LaunchCubit>();
   late List<Launch> launches;
   LaunchEnum _selectedSegment = LaunchEnum.upcoming;
 
   @override
   void initState() {
     launches = [];
+    _getData();
     super.initState();
+  }
+
+  void _getData() {
+    launchCubit.getLaunchList(_selectedSegment);
   }
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffoldLayout(
-      appBar: AppBar(
-        title: _segmentedControl(),
-      ),
-      body: _body(),
+    return BlocBuilder<LaunchCubit, LaunchState>(
+      builder: (context, state) {
+        return AppScaffoldLayout(
+          appBar: AppBar(
+            title: _segmentedControl(),
+          ),
+          body: _body(),
+        );
+      },
     );
   }
 
@@ -55,6 +69,7 @@ class _LaunchListViewState extends State<LaunchListView> {
       },
       onValueChanged: (LaunchEnum? value) {
         if (value != null) {
+          _getData();
           setState(() {
             _selectedSegment = value;
           });
@@ -64,20 +79,31 @@ class _LaunchListViewState extends State<LaunchListView> {
   }
 
   Widget _body() {
-    return FutureBuilder(
-      future: LaunchRepository().getLaunches(_selectedSegment),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          launches = snapshot.data!;
-          return AppListView(
-              listData: launches,
-              itemBuilder: _itemBuilder,
-              onRefresh: () async {
-                await LaunchRepository().getLaunches(_selectedSegment);
-              });
-        } else {
-          return const Center(child: CircularProgressIndicator());
+    return BlocConsumer<LaunchCubit, LaunchState>(
+      listener: (context, state) {
+        if (state is LaunchListSuccessState) {
+          launches = state.launchList;
+        } else if (state is LaunchFailureState) {
+          AppToastMessage().showToastMsg(state.errorMessage, ToastStates.error);
         }
+      },
+      builder: (BuildContext context, LaunchState state) {
+        if (state is LaunchLoadingState) {
+          return const AppLoadingIndicator();
+        } else {
+          return _list();
+        }
+      },
+    );
+  }
+
+  Widget _list() {
+    return AppListView(
+      listData: launches,
+      itemBuilder: _itemBuilder,
+      onRefresh: () async {
+        print("TODO");
+        _getData();
       },
     );
   }
@@ -97,7 +123,7 @@ class _LaunchListViewState extends State<LaunchListView> {
           MaterialPageRoute(
             builder: (context) => LaunchDetailView(launch: launches[index]),
           ),
-        );
+        ).then((_) => _getData());
       },
     );
   }
