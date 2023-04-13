@@ -1,9 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
 import 'package:space_x/model/launch_model.dart';
+import 'package:space_x/ui/widgets/app_row_item.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
-import 'package:space_x/ui/widgets/app_text_styles.dart';
 
 class LaunchDetailView extends StatefulWidget {
   final Launch launch;
@@ -17,6 +15,14 @@ class LaunchDetailView extends StatefulWidget {
 }
 
 class _LaunchDetailViewState extends State<LaunchDetailView> {
+  late Launch launch;
+
+  @override
+  void initState() {
+    launch = widget.launch;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffoldLayout(
@@ -30,57 +36,13 @@ class _LaunchDetailViewState extends State<LaunchDetailView> {
   Widget _body() {
     return Column(
       children: [
-        Row(
-          children: [
-            const AppTitleText(text: "Name:"),
-            const SizedBox(width: 10),
-            AppText(text: widget.launch.name),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: "Date UTC:"),
-            const SizedBox(width: 10),
-            AppText(text: widget.launch.dateUtc.toIso8601String()),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: "Success:"),
-            const SizedBox(width: 10),
-            AppText(text: widget.launch.success.toString()),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: "Rocket:"),
-            const SizedBox(width: 10),
-            AppText(text: widget.launch.rocket),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: "Upcoming:"),
-            const SizedBox(width: 10),
-            AppText(text: widget.launch.upcoming.toString()),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: "Flight number:"),
-            const SizedBox(width: 10),
-            AppText(text: widget.launch.flightNumber.toString()),
-          ],
-        ),
-        Row(
-          children: [
-            const AppTitleText(text: "Details:"),
-            const SizedBox(width: 10),
-            Expanded(
-              child: AppText(text: widget.launch.details ?? ""),
-            ),
-          ],
-        ),
+        AppRowItem(title: "Name:", value: launch.name),
+        AppRowItem(title: "Date UTC:", value: launch.dateUtc.toIso8601String()),
+        AppRowItem(title: "Success:", value: launch.success.toString()),
+        AppRowItem(title: "Rocket:", value: launch.rocket),
+        AppRowItem(title: "Upcoming:", value: launch.upcoming.toString()),
+        AppRowItem(title: "Flight number:", value: launch.flightNumber.toString()),
+        AppRowItem(title: "Details:", value: launch.details),
       ],
     );
   }

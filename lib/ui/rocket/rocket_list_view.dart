@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:space_x/const/app_strings.dart';
 import 'package:space_x/model/rocket_model.dart';
 import 'package:space_x/repository/rocket_repository.dart';
+import 'package:space_x/ui/rocket/rocket_detail_view.dart';
 import 'package:space_x/ui/widgets/app_list_view.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
 import 'package:space_x/ui/widgets/app_text_styles.dart';
@@ -63,7 +64,12 @@ class _RocketListViewState extends State<RocketListView> {
         ],
       ),
       onTap: () {
-        // TODO
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RocketDetailView(rocket: rockets[index]),
+          ),
+        );
       },
     );
   }
