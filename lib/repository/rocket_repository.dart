@@ -12,4 +12,12 @@ class RocketRepository {
 
     return rockets;
   }
+
+  Future<Rocket> getRocketById(String rocketId) async {
+    String endpoint = "${ApiEndpoints.baseUrl}${ApiEndpoints.apiV4}${ApiEndpoints.rocketUrl}";
+    String response = await ApiFactory().getData(endpoint: "$endpoint/$rocketId");
+    Rocket rocket = Rocket.fromJson(convert.jsonDecode(response));
+
+    return rocket;
+  }
 }
