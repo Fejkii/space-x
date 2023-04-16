@@ -5,30 +5,28 @@ class AppListView extends StatelessWidget {
   final List listData;
   final IndexedWidgetBuilder itemBuilder;
   final Future<void> Function()? onRefresh;
-  AppListView({
+  const AppListView({
     Key? key,
     required this.listData,
     required this.itemBuilder,
     this.onRefresh,
   }) : super(key: key);
 
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: () async {
-          print("test");
-        },
-        color: Colors.red,
-        child: ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: listData.length,
-          itemBuilder: itemBuilder,
-        ));
+      onRefresh: () async {
+        onRefresh;
+      },
+      color: Colors.red,
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: listData.length,
+        itemBuilder: itemBuilder,
+      ),
+    );
   }
 }
 

@@ -11,3 +11,8 @@ enum ToastStates {
   error,
   warning,
 }
+
+enum SortType {
+  asc,
+  desc,
+}

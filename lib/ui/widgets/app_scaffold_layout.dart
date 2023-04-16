@@ -3,7 +3,7 @@ import 'package:space_x/const/app_values.dart';
 
 class AppScaffoldLayout extends StatefulWidget {
   final Widget body;
-  final AppBar? appBar;
+  final PreferredSizeWidget? appBar;
   const AppScaffoldLayout({
     Key? key,
     required this.body,

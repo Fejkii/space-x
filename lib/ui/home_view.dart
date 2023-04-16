@@ -40,6 +40,8 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       body: _pages[_currentPageIndex],
       bottomNavigationBar: BottomNavigationBar(
+        unselectedItemColor: Colors.blue,
+        selectedItemColor: Colors.blue,
         currentIndex: _currentPageIndex,
         onTap: _onItemTap,
         items: const [

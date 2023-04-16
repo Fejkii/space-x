@@ -72,7 +72,6 @@ class _RocketListViewState extends State<RocketListView> {
       listData: rocketList,
       itemBuilder: _itemBuilder,
       onRefresh: () async {
-        print("TODO");
         _getData();
       },
     );
