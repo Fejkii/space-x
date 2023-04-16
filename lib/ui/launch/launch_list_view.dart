@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:space_x/app/app_preferences.dart';
 import 'package:space_x/app/dependency_injection.dart';
 import 'package:space_x/const/app_strings.dart';
 import 'package:space_x/const/app_values.dart';
@@ -8,9 +9,11 @@ import 'package:space_x/cubit/launch/launch_cubit.dart';
 import 'package:space_x/model/launch_model.dart';
 import 'package:space_x/ui/launch/launch_detail_view.dart';
 import 'package:space_x/ui/launch/launch_enum.dart';
+import 'package:space_x/ui/launch/launch_filter_dialog.dart';
 import 'package:space_x/ui/widgets/app_list_view.dart';
 import 'package:space_x/ui/widgets/app_loading_indicator.dart';
 import 'package:space_x/ui/widgets/app_scaffold_layout.dart';
+import 'package:space_x/ui/widgets/app_search_bar.dart';
 import 'package:space_x/ui/widgets/app_text_styles.dart';
 import 'package:space_x/ui/widgets/app_toast_message.dart';
 
@@ -22,19 +25,33 @@ class LaunchListView extends StatefulWidget {
 }
 
 class _LaunchListViewState extends State<LaunchListView> {
-  LaunchCubit launchCubit = instance<LaunchCubit>();
+  final LaunchCubit launchCubit = instance<LaunchCubit>();
   late List<Launch> launches;
-  LaunchEnum _selectedSegment = LaunchEnum.upcoming;
+  late LaunchSegment selectedSegment;
+  late LaunchSearchBy searchBy;
+  late List<String>? searchList;
+
+  late String searchValue = "";
 
   @override
   void initState() {
+    selectedSegment = instance<AppPreferences>().getLaunchSegment();
+    searchBy = instance<AppPreferences>().getLaunchSearchBy();
     launches = [];
     _getData();
     super.initState();
   }
 
   void _getData() {
-    launchCubit.getLaunchList(_selectedSegment);
+    if (selectedSegment == LaunchSegment.upcoming) {
+      launchCubit.getLaunchList(selectedSegment);
+    } else {
+      launchCubit.getFilteredLaunchList(
+        selectedSegment,
+        instance<AppPreferences>().getLaunchSortBy(),
+        instance<AppPreferences>().getLaunchSortType(),
+      );
+    }
   }
 
   @override
@@ -42,9 +59,7 @@ class _LaunchListViewState extends State<LaunchListView> {
     return BlocBuilder<LaunchCubit, LaunchState>(
       builder: (context, state) {
         return AppScaffoldLayout(
-          appBar: AppBar(
-            title: _segmentedControl(),
-          ),
+          appBar: _searchBar(),
           body: _body(),
         );
       },
@@ -55,25 +70,69 @@ class _LaunchListViewState extends State<LaunchListView> {
     return CupertinoSegmentedControl(
       unselectedColor: Colors.white,
       selectedColor: Colors.blue,
-      borderColor: Colors.white,
-      groupValue: _selectedSegment,
-      children: const <LaunchEnum, Widget>{
-        LaunchEnum.upcoming: Padding(
+      borderColor: Colors.grey,
+      groupValue: selectedSegment,
+      padding: const EdgeInsets.only(bottom: AppPadding.p10),
+      children: const <LaunchSegment, Widget>{
+        LaunchSegment.upcoming: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
           child: Text(AppStrings.upcoming),
         ),
-        LaunchEnum.past: Padding(
+        LaunchSegment.past: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
           child: Text(AppStrings.past),
         ),
       },
-      onValueChanged: (LaunchEnum? value) {
+      onValueChanged: (LaunchSegment? value) {
         if (value != null) {
-          _getData();
           setState(() {
-            _selectedSegment = value;
+            selectedSegment = value;
           });
+          instance<AppPreferences>().setLaunchSegment(selectedSegment);
+          _getData();
         }
+      },
+    );
+  }
+
+  PreferredSizeWidget _searchBar() {
+    if (searchBy == LaunchSearchBy.name) {
+      searchList = launches.map((e) => e.name).toList();
+    } else {
+      searchList = launches.map((e) => e.flightNumber.toString()).toList();
+    }
+    return AppSearchBar(
+      title: AppStrings.launches,
+      leading: selectedSegment == LaunchSegment.past
+          ? IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const LaunchFilterDialog();
+                  },
+                ).then((value) => (value == true) ? _getData() : null);
+              },
+              icon: const Icon(
+                Icons.filter_alt_outlined,
+                color: Colors.white,
+              ),
+            )
+          : null,
+      suggestions: searchList,
+      onSuggestionTap: (searchValue) {
+        Launch launch;
+        if (searchBy == LaunchSearchBy.name) {
+          launch = launches.firstWhere((element) => element.name.contains(searchValue));
+        } else {
+          launch = launches.firstWhere((element) => element.flightNumber.toString().contains(searchValue));
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LaunchDetailView(launch: launch),
+          ),
+        ).then((_) => _getData());
       },
     );
   }
@@ -91,7 +150,12 @@ class _LaunchListViewState extends State<LaunchListView> {
         if (state is LaunchLoadingState) {
           return const AppLoadingIndicator();
         } else {
-          return _list();
+          return Column(
+            children: [
+              _segmentedControl(),
+              _list(),
+            ],
+          );
         }
       },
     );
@@ -102,7 +166,6 @@ class _LaunchListViewState extends State<LaunchListView> {
       listData: launches,
       itemBuilder: _itemBuilder,
       onRefresh: () async {
-        print("TODO");
         _getData();
       },
     );

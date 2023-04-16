@@ -2,24 +2,58 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'launch_model.g.dart';
 
+@JsonSerializable()
+class LaunchQuery {
+  @JsonKey(name: "docs")
+  List<Launch>? launches;
+  int? totalDocs;
+  int? offset;
+  int? limit;
+  int? totalPages;
+  int? page;
+  int? pagingCounter;
+  bool? hasPrevPage;
+  bool? hasNextPage;
+  int? prevPage;
+  int? nextPage;
+
+  LaunchQuery({
+    this.launches,
+    this.totalDocs,
+    this.offset,
+    this.limit,
+    this.totalPages,
+    this.page,
+    this.pagingCounter,
+    this.hasPrevPage,
+    this.hasNextPage,
+    this.prevPage,
+    this.nextPage,
+  });
+
+  factory LaunchQuery.fromJson(Map<String, dynamic> json) => _$LaunchQueryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LaunchQueryToJson(this);
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Launch {
-  dynamic fairings; // TODO Object
+  dynamic fairings;
   Links links;
   DateTime? staticFireDateUtc;
   int? staticFireDateUnix;
   bool tdb;
   bool net;
   int? window;
-  String rocket; // TODO: UUID
+  String rocket;
   bool? success;
-  List<dynamic> failures; // TODO: Object
+  List<dynamic> failures;
   String? details;
-  List<dynamic> crew; // TODO Object
-  List<dynamic> ships; // TODO UUID
-  List<String> capsules; // TODO array UUID
-  List<String> payloads; // TODO array UUID
-  String launchpad; // TODO UUID
+  List<dynamic> crew;
+  List<dynamic> ships;
+  List<String> capsules;
+  List<String> payloads;
+  String launchpad;
   bool autoUpdate;
   int flightNumber;
   String name;

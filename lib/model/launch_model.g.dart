@@ -6,6 +6,37 @@ part of 'launch_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+LaunchQuery _$LaunchQueryFromJson(Map<String, dynamic> json) => LaunchQuery(
+      launches: (json['docs'] as List<dynamic>?)
+          ?.map((e) => Launch.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      totalDocs: json['totalDocs'] as int?,
+      offset: json['offset'] as int?,
+      limit: json['limit'] as int?,
+      totalPages: json['totalPages'] as int?,
+      page: json['page'] as int?,
+      pagingCounter: json['pagingCounter'] as int?,
+      hasPrevPage: json['hasPrevPage'] as bool?,
+      hasNextPage: json['hasNextPage'] as bool?,
+      prevPage: json['prevPage'] as int?,
+      nextPage: json['nextPage'] as int?,
+    );
+
+Map<String, dynamic> _$LaunchQueryToJson(LaunchQuery instance) =>
+    <String, dynamic>{
+      'docs': instance.launches,
+      'totalDocs': instance.totalDocs,
+      'offset': instance.offset,
+      'limit': instance.limit,
+      'totalPages': instance.totalPages,
+      'page': instance.page,
+      'pagingCounter': instance.pagingCounter,
+      'hasPrevPage': instance.hasPrevPage,
+      'hasNextPage': instance.hasNextPage,
+      'prevPage': instance.prevPage,
+      'nextPage': instance.nextPage,
+    };
+
 Launch _$LaunchFromJson(Map<String, dynamic> json) => Launch(
       fairings: json['fairings'],
       links: Links.fromJson(json['links'] as Map<String, dynamic>),
